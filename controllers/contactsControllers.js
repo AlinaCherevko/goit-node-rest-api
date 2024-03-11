@@ -76,3 +76,20 @@ export const updateContact = async (req, res, next) => {
     next(error);
   }
 };
+
+export const updateStatusContact = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { favorite } = req.body;
+    if (!favorite) {
+      throw HttpError(400, "You don't pass a favorite status ");
+    }
+    const result = await contactsService.updateContact(id, req.body);
+    if (!result) {
+      throw HttpError(404, "Not found");
+    }
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
