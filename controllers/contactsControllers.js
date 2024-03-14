@@ -2,6 +2,7 @@ import * as contactsService from "../services/contactsServices.js";
 import {
   createContactSchema,
   updateContactSchema,
+  updateStatusSchema,
 } from "../schemas/contactsSchemas.js";
 import HttpError from "../helpers/HttpError.js";
 
@@ -80,9 +81,10 @@ export const updateContact = async (req, res, next) => {
 export const updateStatusContact = async (req, res, next) => {
   try {
     const { id } = req.params;
-    const { favorite } = req.body;
-    if (!favorite) {
-      throw HttpError(400, "You don't pass a favorite status ");
+
+    const { error } = updateStatusSchema.validate(req.body);
+    if (error) {
+      throw HttpError(400, error.message);
     }
     const result = await contactsService.updateContact(id, req.body);
     if (!result) {
