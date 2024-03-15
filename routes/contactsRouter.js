@@ -6,11 +6,12 @@ import {
   createContactSchema,
   updateContactSchema,
 } from "../schemas/contactsSchemas.js";
+import { authenticate } from "../middlewares/authenticate.js";
 
 const contactsRouter = express.Router();
 
 contactsRouter.get("/", contactsController.getAllContacts);
-
+contactsRouter.use(authenticate);
 contactsRouter.get("/:id", isValidId, contactsController.getOneContact);
 
 contactsRouter.delete("/:id", isValidId, contactsController.deleteContact);
