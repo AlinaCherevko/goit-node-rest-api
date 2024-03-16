@@ -34,12 +34,24 @@ export const signIn = controllersWrapper(async (req, res) => {
   if (!comparedPassword) {
     throw HttpError(401, "Email or password are not exist");
   }
-
   const { _id: id } = user;
   const payload = {
     id,
   };
-
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "48h" });
   res.json({ token });
+
+  await authService.updateUser({ _id: id }, { token });
 });
+
+export const getCurrent = async (req, res, next) => {
+  const { email, subscription } = req.user;
+
+  res.json({ email, subscription });
+};
+
+export const logout = async (req, res, next) => {
+  const { _id } = req.user;
+  await authService.updateUser({ _id }, { token: " " });
+  res.json({ message: "Logout success" });
+};

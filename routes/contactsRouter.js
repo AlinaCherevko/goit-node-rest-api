@@ -9,9 +9,10 @@ import {
 import { authenticate } from "../middlewares/authenticate.js";
 
 const contactsRouter = express.Router();
+contactsRouter.use(authenticate);
 
 contactsRouter.get("/", contactsController.getAllContacts);
-contactsRouter.use(authenticate);
+
 contactsRouter.get("/:id", isValidId, contactsController.getOneContact);
 
 contactsRouter.delete("/:id", isValidId, contactsController.deleteContact);

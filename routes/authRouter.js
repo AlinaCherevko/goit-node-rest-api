@@ -7,6 +7,7 @@ import {
 import * as authController from "../controllers/authControllers.js";
 
 const authRouter = express.Router();
+import { authenticate } from "../middlewares/authenticate.js";
 
 authRouter.post(
   "/signup",
@@ -19,4 +20,8 @@ authRouter.post(
   validateBody(createUserSignInSchema),
   authController.signIn
 );
+
+authRouter.get("/current", authenticate, authController.getCurrent);
+
+authRouter.post("/logout", authenticate, authController.logout);
 export default authRouter;
