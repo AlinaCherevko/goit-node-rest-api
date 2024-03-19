@@ -3,9 +3,10 @@ import { controllersWrapper } from "../decorators/controllersWrapper.js";
 import HttpError from "../helpers/HttpError.js";
 
 export const getAllContacts = controllersWrapper(async (req, res, next) => {
-  const { favorite = null } = req.query;
+  const { page = 1, limit = 20, favorite = null } = req.query;
+  const skip = (page - 1) * limit;
   const filter = favorite === null ? {} : { favorite };
-  const result = await contactsService.getAllContacts(filter);
+  const result = await contactsService.getAllContacts(filter, { skip, limit });
   res.json(result);
 });
 

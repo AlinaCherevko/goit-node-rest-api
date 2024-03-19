@@ -55,3 +55,17 @@ export const logout = async (req, res, next) => {
   await authService.updateUser({ _id }, { token: " " });
   res.json({ message: "Logout success" });
 };
+export const updateSubscription = controllersWrapper(async (req, res, next) => {
+  const { _id } = req.user;
+  const { subscription } = req.body;
+  if (!subscription) {
+    throw HttpError(400, "You don't pass a subscription ");
+  }
+  const result = await authService.updateUserSubscription(_id, {
+    subscription,
+  });
+  if (!result) {
+    throw HttpError(404, "Not found");
+  }
+  res.json(result);
+});

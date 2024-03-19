@@ -3,6 +3,7 @@ import { validateBody } from "../helpers/validateBody.js";
 import {
   createUserSignUpSchema,
   createUserSignInSchema,
+  createUsersUpdateSubscription,
 } from "../schemas/userSchemas.js";
 import * as authController from "../controllers/authControllers.js";
 
@@ -24,4 +25,13 @@ authRouter.post(
 authRouter.get("/current", authenticate, authController.getCurrent);
 
 authRouter.post("/logout", authenticate, authController.logout);
+
+authRouter.patch(
+  "/users",
+
+  validateBody(createUsersUpdateSubscription),
+  authenticate,
+  authController.updateSubscription
+);
+
 export default authRouter;
