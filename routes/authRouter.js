@@ -11,13 +11,13 @@ const authRouter = express.Router();
 import { authenticate } from "../middlewares/authenticate.js";
 
 authRouter.post(
-  "/signup",
+  "/register",
   validateBody(createUserSignUpSchema),
   authController.signUp
 );
 
 authRouter.post(
-  "/signin",
+  "/login",
   validateBody(createUserSignInSchema),
   authController.signIn
 );

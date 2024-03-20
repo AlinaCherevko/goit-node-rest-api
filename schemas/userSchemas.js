@@ -2,7 +2,6 @@ import Joi from "joi";
 import { subscription } from "../constants/subscription.js";
 
 export const createUserSignUpSchema = Joi.object({
-  name: Joi.string().required(),
   email: Joi.string().required(),
   password: Joi.string().min(6).required(),
 });

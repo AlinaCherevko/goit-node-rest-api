@@ -16,8 +16,7 @@ export const signUp = controllersWrapper(async (req, res) => {
   }
   const newUser = await authService.signUp(req.body);
   res.status(201).json({
-    name: newUser.name,
-    email: newUser.email,
+    user: { email: newUser.email, subscription: newUser.subscription },
   });
 });
 
@@ -25,21 +24,24 @@ export const signIn = controllersWrapper(async (req, res) => {
   const { email, password } = req.body;
   const user = await authService.findUserByEmail({ email });
   if (!user) {
-    throw HttpError(401, "Email or password are not exist");
+    throw HttpError(401);
   }
   const comparedPassword = await authService.validatePassword(
     password,
     user.password
   );
   if (!comparedPassword) {
-    throw HttpError(401, "Email or password are not exist");
+    throw HttpError(401);
   }
   const { _id: id } = user;
   const payload = {
     id,
   };
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "48h" });
-  res.json({ token });
+  res.json({
+    token,
+    user: { email: user.email, subscription: user.subscription },
+  });
 
   await authService.updateUser({ _id: id }, { token });
 });
@@ -52,8 +54,8 @@ export const getCurrent = async (req, res, next) => {
 
 export const logout = async (req, res, next) => {
   const { _id } = req.user;
-  await authService.updateUser({ _id }, { token: " " });
-  res.json({ message: "Logout success" });
+  await authService.updateUser({ _id }, { token: "" });
+  res.status(204).json({});
 };
 export const updateSubscription = controllersWrapper(async (req, res, next) => {
   const { _id } = req.user;

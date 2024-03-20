@@ -5,14 +5,17 @@ import HttpError from "../helpers/HttpError.js";
 export const getAllContacts = controllersWrapper(async (req, res, next) => {
   const { page = 1, limit = 20, favorite = null } = req.query;
   const skip = (page - 1) * limit;
-  const filter = favorite === null ? {} : { favorite };
+  const { _id: owner } = req.user;
+  const filter = favorite === null ? { owner } : { favorite, owner };
   const result = await contactsService.getAllContacts(filter, { skip, limit });
   res.json(result);
 });
 
 export const getOneContact = controllersWrapper(async (req, res, next) => {
+  const { _id: owner } = req.user;
+  console.log(owner);
   const { id } = req.params;
-  const result = await contactsService.getOneContact(id);
+  const result = await contactsService.getOneContact({ _id: id, owner });
   if (!result) {
     throw HttpError(404, "Not found");
   }
@@ -21,7 +24,9 @@ export const getOneContact = controllersWrapper(async (req, res, next) => {
 
 export const deleteContact = controllersWrapper(async (req, res, next) => {
   const { id } = req.params;
-  const result = await contactsService.deleteContact(id);
+  const { _id: owner } = req.user;
+
+  const result = await contactsService.deleteContact({ _id: id, owner });
   if (!result) {
     throw HttpError(404, "Not found");
   }
@@ -29,7 +34,8 @@ export const deleteContact = controllersWrapper(async (req, res, next) => {
 });
 
 export const createContact = controllersWrapper(async (req, res, next) => {
-  const result = await contactsService.createContact(req.body);
+  const { _id: owner } = req.user;
+  const result = await contactsService.createContact({ ...req.body, owner });
   res.status(201).json(result);
 });
 
@@ -39,7 +45,12 @@ export const updateContact = controllersWrapper(async (req, res, next) => {
     throw HttpError(400, "Body must have at least one field");
   }
   const { id } = req.params;
-  const result = await contactsService.updateContact(id, req.body);
+  const { _id: owner } = req.user;
+
+  const result = await contactsService.updateContact(
+    { _id: id, owner },
+    req.body
+  );
 
   if (!result) {
     throw HttpError(404, "Not found");
@@ -51,11 +62,12 @@ export const updateContact = controllersWrapper(async (req, res, next) => {
 export const updateStatusContact = controllersWrapper(
   async (req, res, next) => {
     const { id } = req.params;
-    const { favorite } = req.body;
-    if (!favorite) {
-      throw HttpError(400, "You don't pass a favorite status ");
-    }
-    const result = await contactsService.updateContact(id, req.body);
+    const { _id: owner } = req.user;
+
+    const result = await contactsService.updateContact(
+      { _id: id, owner },
+      req.body
+    );
     if (!result) {
       throw HttpError(404, "Not found");
     }
