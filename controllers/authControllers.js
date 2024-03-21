@@ -24,14 +24,14 @@ export const signIn = controllersWrapper(async (req, res) => {
   const { email, password } = req.body;
   const user = await authService.findUserByEmail({ email });
   if (!user) {
-    throw HttpError(401);
+    throw HttpError(401, "Email or password is wrong");
   }
   const comparedPassword = await authService.validatePassword(
     password,
     user.password
   );
   if (!comparedPassword) {
-    throw HttpError(401);
+    throw HttpError(401, "Email or password is wrong");
   }
   const { _id: id } = user;
   const payload = {
