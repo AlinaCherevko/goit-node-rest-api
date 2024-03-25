@@ -6,12 +6,14 @@ import {
   createUsersUpdateSubscription,
 } from "../schemas/userSchemas.js";
 import * as authController from "../controllers/authControllers.js";
+import { upload } from "../middlewares/uploads.js";
 
 const authRouter = express.Router();
 import { authenticate } from "../middlewares/authenticate.js";
 
 authRouter.post(
   "/register",
+  upload.single("avatar"),
   validateBody(createUserSignUpSchema),
   authController.signUp
 );

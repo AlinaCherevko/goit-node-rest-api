@@ -1,5 +1,7 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import fs from "fs/promises";
+import path from "path";
 import * as authService from "../services/authServices.js";
 import HttpError from "../helpers/HttpError.js";
 
@@ -7,16 +9,30 @@ import { controllersWrapper } from "../decorators/controllersWrapper.js";
 
 dotenv.config();
 const { JWT_SECRET } = process.env;
+const avatarsPath = path.resolve("public", "avatars");
 
 export const signUp = controllersWrapper(async (req, res) => {
+  console.log(req.body);
+  console.log(req.file);
+
+  const { path: oldPath, filename } = req.file;
+  const newPath = path.join(avatarsPath, filename);
+
+  await fs.rename(oldPath, newPath);
+  const avatarURL = path.join("avatars", filename);
+
   const { email } = req.body;
   const user = await authService.findUserByEmail({ email });
   if (user) {
     throw HttpError(409, "Email in use");
   }
-  const newUser = await authService.signUp(req.body);
+  const newUser = await authService.signUp({ ...req.body, avatarURL });
   res.status(201).json({
-    user: { email: newUser.email, subscription: newUser.subscription },
+    user: {
+      email: newUser.email,
+      subscription: newUser.subscription,
+      avatarURL: newUser.avatarURL,
+    },
   });
 });
 
