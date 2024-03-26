@@ -13,7 +13,7 @@ import { authenticate } from "../middlewares/authenticate.js";
 
 authRouter.post(
   "/register",
-  upload.single("avatar"),
+
   validateBody(createUserSignUpSchema),
   authController.signUp
 );
@@ -34,6 +34,13 @@ authRouter.patch(
   validateBody(createUsersUpdateSubscription),
   authenticate,
   authController.updateSubscription
+);
+
+authRouter.patch(
+  "/avatars",
+  upload.single("avatar"),
+  authenticate,
+  authController.changeAvatar
 );
 
 export default authRouter;
