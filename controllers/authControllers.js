@@ -95,7 +95,7 @@ export const changeAvatar = controllersWrapper(async (req, res, next) => {
       return image
         .resize(250, 250) // Зміна розміру на 250x250 пікселів
         .quality(100) // Підтримка якості зображення
-        .write(newPath); // Зберігання зображення з новим розміром
+        .write(oldPath); // Зберігання зображення з новим розміром
     })
     .catch((err) => {
       throw new Error(`Error processing image: ${err}`);
