@@ -84,7 +84,7 @@ export const updateSubscription = controllersWrapper(async (req, res, next) => {
 export const changeAvatar = controllersWrapper(async (req, res, next) => {
   console.log(req.file);
   const { path: oldPath, originalname, filename } = req.file;
-  const extension = originalname.split(".").pop();
+
   const { _id } = req.user;
 
   const newPath = path.join(avatarsPath, filename);
